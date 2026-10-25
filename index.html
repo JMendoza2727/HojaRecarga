@@ -1,7 +1,20 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f5f7fb"><meta name="app-build" content="20261025-10"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="HojaRecarga"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg"><title>HojaRecarga</title>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f5f7fb"><meta name="app-build" content="20261025-11"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="HojaRecarga"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg"><title>HojaRecarga</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1b293b;background:#f5f7fb}*{box-sizing:border-box}body{margin:0}main{max-width:550px;margin:auto;padding:calc(20px + env(safe-area-inset-top)) 16px 45px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.brand{font-size:23px;font-weight:800;letter-spacing:-.7px}.brand span{color:#3269bd}.small{font-size:12px;color:#718094}.card{background:white;border:1px solid #e7ebf2;border-radius:19px;padding:19px;margin-bottom:14px;box-shadow:0 3px 15px #1e355009}h2{font-size:17px;margin:0 0 14px}label{display:block;font-size:13px;font-weight:650;color:#4e5f73;margin-bottom:7px}input{font:inherit;width:100%;border:1px solid #dce4ee;border-radius:12px;background:#f8fafc;padding:13px;color:#192b41;outline-color:#3269bd}input[type=checkbox]{width:19px;height:19px;accent-color:#3269bd}.row{display:flex;gap:12px}.row>*{flex:1;min-width:0}.field{margin-bottom:15px}.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid #edf0f5}.toggle label{margin:0;font-size:15px;color:#1c2a3b}.button{border:0;border-radius:13px;background:#3269bd;color:white;font:inherit;font-weight:700;padding:15px;width:100%;cursor:pointer}.ghost{background:#edf3fc;color:#3269bd}.pill{font-size:12px;background:#edf3fc;color:#3269bd;padding:7px 9px;border-radius:10px}.muted{color:#758294;font-size:13px}.amount{font-size:29px;font-weight:800;letter-spacing:-.8px}.totals{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#f6f8fc;border-radius:14px;padding:14px}.metric .amount{font-size:23px}.green{color:#147b59}.line{display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px solid #edf0f5}.line:last-child{border:0}.hide{display:none!important}.tabs{display:flex;gap:7px;margin-bottom:15px}.tabs button{flex:1;border:0;border-radius:12px;padding:11px 5px;background:#e9eef6;color:#54647b;font-weight:700}.tabs button.active{background:#3269bd;color:#fff}.history{border:1px solid #e6ebf2;border-radius:13px;padding:13px;margin-bottom:9px;cursor:pointer}.history strong{display:block}.history small{color:#6b788a}.history .right{float:right;text-align:right}.danger{color:#b83943;background:#fff1f2}.notice{font-size:12px;color:#738196;line-height:1.5}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.settings-grid .field{margin:0}.settings-grid input{padding:11px}.settings-title{font-weight:750;margin:18px 0 10px}.bottom{margin-top:12px}.datebar{display:flex;align-items:center;gap:9px}.datebar input{flex:1;min-width:0}.mini{border:0;background:#eaf0f9;border-radius:10px;padding:12px;font-weight:800;color:#3269bd}
+
+.breakdown-toggle{display:block;width:100%;margin-top:10px;padding:8px 4px;border:1px solid #d9e5f5;border-radius:9px;background:#eaf2fd;color:#3269bd;font:inherit;font-size:12px;font-weight:750;cursor:pointer}
+.breakdown-toggle[aria-expanded="true"]{background:#dbeafe;border-color:#aac8f3}
+.breakdown-panel{margin-top:15px;padding-top:13px;border-top:1px solid #e7ebf2}
+.breakdown-title{font-size:14px;font-weight:780;margin-bottom:12px}
+.breakdown-item{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;align-items:start;padding:10px 0;border-bottom:1px solid #edf0f5}
+.breakdown-label{font-size:13px;font-weight:620}
+.breakdown-formula{font-size:11px;color:#718094;margin-top:3px}
+.breakdown-value{font-size:13px;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
+.breakdown-section{font-size:12px;font-weight:750;color:#62758b;margin-top:14px}
+.breakdown-sum{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;font-size:14px;font-weight:780}
+.breakdown-sum strong{white-space:nowrap}
+.breakdown-sum.net{color:#147b59}
 </style></head><body><main><header class="head"><div><div class="brand">Hoja<span>Recarga</span></div><div class="small">Tu registro de jornada</div></div><span class="pill" id="savedBadge">Sin guardar</span></header>
 <nav class="tabs"><button data-tab="today" class="active">Hoy</button><button data-tab="history">Historial</button><button data-tab="settings">Editar tarifas</button></nav>
 <section id="today">
@@ -11,8 +24,14 @@
 <div class="toggle"><label for="reten">Hoy estoy de retén</label><input id="reten" type="checkbox"></div>
 <div id="retenArea" class="field hide" style="margin-top:12px"><label for="retenType">Tipo de retén</label><select id="retenType" style="width:100%;padding:13px;border-radius:12px;border:1px solid #dce4ee;background:#f8fafc;font:inherit"><option value="normal">Normal</option><option value="holiday">Festivo / fin de semana</option></select></div>
 <button class="button" id="save">Guardar día</button><button class="button ghost bottom hide" id="delete">Eliminar registro de este día</button></div>
-<div class="card"><h2>Importe de este día</h2><div class="totals"><div class="metric"><div class="muted">Bruto</div><div class="amount" id="todayGross">0,00 €</div></div><div class="metric"><div class="muted">Neto estimado</div><div class="amount green" id="todayNet">0,00 €</div></div></div><div id="breakdown" style="margin-top:13px"></div></div>
-<div class="card"><h2>Acumulado de la recarga</h2><div class="totals"><div class="metric"><div class="muted">Bruto total</div><div class="amount" id="allGross">0,00 €</div></div><div class="metric"><div class="muted">Neto estimado</div><div class="amount green" id="allNet">0,00 €</div></div></div><div class="muted" id="count" style="margin-top:11px"></div></div></section>
+<div class="card"><h2>Importe de este día</h2><div class="totals">
+<div class="metric"><div class="muted">Bruto</div><div class="amount" id="todayGross">0,00 €</div><button class="breakdown-toggle" type="button" data-detail="day" data-kind="gross" aria-expanded="false" aria-controls="dayDetails">Ver desglose</button></div>
+<div class="metric"><div class="muted">Neto estimado</div><div class="amount green" id="todayNet">0,00 €</div><button class="breakdown-toggle" type="button" data-detail="day" data-kind="net" aria-expanded="false" aria-controls="dayDetails">Ver desglose</button></div>
+</div><div id="dayDetails" class="breakdown-panel hide"></div></div>
+<div class="card"><h2>Acumulado de la recarga</h2><div class="totals">
+<div class="metric"><div class="muted">Bruto total</div><div class="amount" id="allGross">0,00 €</div><button class="breakdown-toggle" type="button" data-detail="total" data-kind="gross" aria-expanded="false" aria-controls="totalDetails">Ver desglose</button></div>
+<div class="metric"><div class="muted">Neto estimado</div><div class="amount green" id="allNet">0,00 €</div><button class="breakdown-toggle" type="button" data-detail="total" data-kind="net" aria-expanded="false" aria-controls="totalDetails">Ver desglose</button></div>
+</div><div id="totalDetails" class="breakdown-panel hide"></div><div class="muted" id="count" style="margin-top:11px"></div></div></section>
 <section id="history" class="hide"><div class="card"><h2>Días guardados</h2><div id="entries"></div><button id="export" class="button ghost">Exportar copia de seguridad</button><div class="field bottom"><label for="import">Importar copia de seguridad (.json)</label><input id="import" type="file" accept="application/json,.json"></div></div></section>
 <section id="settings" class="hide"><div class="card"><h2>Tarifas y retenciones</h2><p class="notice">Todos los importes se pueden modificar. Los valores iniciales son orientativos; comprueba tu convenio y nómina. Los cambios recalculan todo el historial.</p><div id="rateFields"></div><button class="button bottom" id="saveRates">Guardar tarifas</button></div></section>
 <p class="notice">Los datos se guardan solo en este dispositivo. Haz copias de seguridad desde Historial. El neto aplica porcentajes aproximados de IRPF y cotización sobre el bruto registrado; no sustituye una nómina.</p></main>
@@ -29,16 +48,115 @@ const weekend=d=>{const n=new Date(d+'T12:00:00').getDay();return n===0||n===6};
 const store=()=>localStorage.setItem(KEY,JSON.stringify(state));
 const active=()=>$('day').value;
 const read=()=>({normal:num($('normal').value),extra:num($('extra').value),km:num($('km').value),holiday:$('holiday').checked,reten:$('reten').checked,retenType:$('retenType').value});
-const compute=v=>{const r=state.rates,items=[];const add=(label,value)=>{if(value)items.push([label,value])};
-const work=v.normal+v.extra>0;
-add('Horas normales',num(v.normal)*num(r.normalHour));
-add('Horas extras',num(v.extra)*1.5*num(r.extraHour));add('Kilometraje',num(v.km)*num(r.kmRate));
-if(work){add('Media dieta',num(r.halfDiet));add(v.holiday?'Plus parada festivo':'Plus parada normal',num(v.holiday?r.paradaHoliday:r.paradaNormal));add('Plus tóxico',num(r.ptp));if(!r.noNuclear)add('Complemento nuclear',num(r.nuclear));if(!r.noShift)add('Plus turno',num(r.shift))}
-if(v.reten)add(v.retenType==='holiday'?'Retén festivo':'Retén normal',num(v.retenType==='holiday'?r.retenHoliday:r.retenNormal));
-const gross=items.reduce((s,x)=>s+x[1],0);const extras=num(v.extra)*1.5*num(r.extraHour);const exempt=(work?num(r.halfDiet):0)+num(v.km)*num(r.kmRate);const taxable=Math.max(0,gross-exempt);const irpf=taxable*Math.min(100,num(r.irpf))/100;const ssExtra=extras*Math.min(100,num(r.ssExtra??4.70))/100;const ssOther=Math.max(0,taxable-extras)*Math.min(100,num(r.ss))/100;const net=gross-irpf-ssExtra-ssOther;return {gross,net,items,irpf,ssExtra,ssOther,exempt}};
-function showDay(date){$('day').value=date;const v=state.days[date]||{normal:0,extra:0,holiday:weekend(date),reten:false,retenType:weekend(date)?'holiday':'normal'};$('normal').value=v.normal||'';$('extra').value=v.extra||'';$('km').value=v.km||'';$('holiday').checked=!!v.holiday;$('reten').checked=!!v.reten;$('retenType').value=v.retenType|| (v.holiday?'holiday':'normal');$('savedBadge').textContent=state.days[date]?'Guardado':'Sin guardar';$('delete').classList.toggle('hide',!state.days[date]);refresh()}
-function refresh(){const v=read(),c=compute(v);$('retenArea').classList.toggle('hide',!v.reten);$('todayGross').textContent=money(c.gross);$('todayNet').textContent=money(c.net);$('breakdown').innerHTML=c.items.map(([name,value])=>'<div class="line"><span>'+name+'</span><strong>'+money(value)+'</strong></div>').join('')+(c.gross?'<div class="line"><span>IRPF estimado</span><strong>−'+money(c.irpf)+'</strong></div><div class="line"><span>Cotización horas extras (4,70 %)</span><strong>−'+money(c.ssExtra)+'</strong></div><div class="line"><span>Seguridad Social resto salario</span><strong>−'+money(c.ssOther)+'</strong></div>':'<div class="muted">Introduce las horas o marca retén para calcular.</div>');
-let gross=0,net=0;Object.values(state.days).forEach(day=>{const c=compute(day);gross+=c.gross;net+=c.net});$('allGross').textContent=money(gross);$('allNet').textContent=money(net);$('count').textContent=Object.keys(state.days).length+' días registrados'}
+
+ const itemDetails=v=>{
+  const r=state.rates,items=[],work=num(v.normal)+num(v.extra)>0;
+  const add=(key,label,qty,unit,rate,multiplier=1)=>{
+   const quantity=num(qty),price=num(rate),value=quantity*price*multiplier;
+   if(value>0)items.push({key,label,qty:quantity,unit,rate:price,multiplier,value});
+  };
+  add('normal','Horas normales',v.normal,'h',r.normalHour);
+  add('extra','Horas extras',v.extra,'h',r.extraHour,1.5);
+  add('km','Kilometraje',v.km,'km',r.kmRate);
+  if(work){
+   add('halfDiet','Media dieta',1,'día',r.halfDiet);
+   if(v.holiday)add('paradaHoliday','Plus parada festivo',1,'día',r.paradaHoliday);
+   else add('paradaNormal','Plus parada normal',1,'día',r.paradaNormal);
+   add('ptp','Plus tóxico',1,'día',r.ptp);
+   if(!r.noNuclear)add('nuclear','Complemento nuclear',1,'día',r.nuclear);
+   if(!r.noShift)add('shift','Plus turno',1,'día',r.shift);
+  }
+  if(v.reten){
+   if(v.retenType==='holiday')add('retenHoliday','Retén festivo',1,'servicio',r.retenHoliday);
+   else add('retenNormal','Retén normal',1,'servicio',r.retenNormal);
+  }
+  return items;
+ };
+ const compute=v=>{
+  v=v||{};
+  const r=state.rates,details=itemDetails(v),items=details.map(x=>[x.label,x.value]);
+  const gross=details.reduce((s,x)=>s+x.value,0);
+  const work=num(v.normal)+num(v.extra)>0;
+  const extras=num(v.extra)*1.5*num(r.extraHour);
+  const exempt=(work?num(r.halfDiet):0)+num(v.km)*num(r.kmRate);
+  const taxable=Math.max(0,gross-exempt);
+  const otherBase=Math.max(0,taxable-extras);
+  const irpf=taxable*Math.min(100,num(r.irpf))/100;
+  const ssExtra=extras*Math.min(100,num(r.ssExtra??4.70))/100;
+  const ssOther=otherBase*Math.min(100,num(r.ss))/100;
+  const net=gross-irpf-ssExtra-ssOther;
+  return {gross,net,items,details,irpf,ssExtra,ssOther,exempt,taxable,extras,otherBase};
+ };
+ function showDay(date){$('day').value=date;const v=state.days[date]||{normal:0,extra:0,holiday:weekend(date),reten:false,retenType:weekend(date)?'holiday':'normal'};$('normal').value=v.normal||'';$('extra').value=v.extra||'';$('km').value=v.km||'';$('holiday').checked=!!v.holiday;$('reten').checked=!!v.reten;$('retenType').value=v.retenType|| (v.holiday?'holiday':'normal');$('savedBadge').textContent=state.days[date]?'Guardado':'Sin guardar';$('delete').classList.toggle('hide',!state.days[date]);refresh()}
+ const qtyText=n=>new Intl.NumberFormat('es-ES',{maximumFractionDigits:3}).format(n);
+ const percent=n=>qtyText(Math.min(100,num(n)))+' %';
+ const detailOpen={day:null,total:null};
+ function aggregateDays(){
+  const combined={gross:0,net:0,irpf:0,ssExtra:0,ssOther:0,taxable:0,extras:0,otherBase:0,details:[]};
+  const groups=new Map();
+  for(const v of Object.values(state.days)){
+   const c=compute(v);
+   for(const key of ['gross','net','irpf','ssExtra','ssOther','taxable','extras','otherBase'])combined[key]+=c[key];
+   for(const item of c.details){
+    if(!groups.has(item.key))groups.set(item.key,{...item,qty:0,value:0});
+    const group=groups.get(item.key);
+    group.qty+=item.qty;
+    group.value+=item.value;
+   }
+  }
+  const order=['normal','extra','km','halfDiet','paradaNormal','paradaHoliday','ptp','nuclear','shift','retenNormal','retenHoliday'];
+  combined.details=[...groups.values()].sort((a,b)=>order.indexOf(a.key)-order.indexOf(b.key));
+  return combined;
+ }
+ function detailRow(label,formula,value,deduct=false){
+  return '<div class="breakdown-item"><div><div class="breakdown-label">'+label+'</div><div class="breakdown-formula">'+formula+'</div></div><strong class="breakdown-value">'+(deduct?'−':'')+money(value)+'</strong></div>';
+ }
+ function breakdownHTML(c,kind){
+  if(!c.details.length)return '<div class="muted">No hay importes que desglosar.</div>';
+  let result='<div class="breakdown-title">Desglose del '+(kind==='gross'?'bruto':'neto estimado')+'</div>';
+  for(const item of c.details){
+   const units=item.unit==='día'&&item.qty!==1?'días':item.unit==='servicio'&&item.qty!==1?'servicios':item.unit;
+   const formula=qtyText(item.qty)+' '+units+' × '+money(item.rate)+'/'+item.unit+(item.multiplier===1?'':' × '+qtyText(item.multiplier));
+   result+=detailRow(item.label,formula,item.value);
+  }
+  result+='<div class="breakdown-sum"><span>Total bruto</span><strong>'+money(c.gross)+'</strong></div>';
+  if(kind==='net'){
+   result+='<div class="breakdown-section">Retenciones y cotizaciones estimadas</div>';
+   result+=detailRow('IRPF estimado',money(c.taxable)+' × '+percent(state.rates.irpf),c.irpf,true);
+   result+=detailRow('Cotización horas extras',money(c.extras)+' × '+percent(state.rates.ssExtra??4.70),c.ssExtra,true);
+   result+=detailRow('Seguridad Social resto salario',money(c.otherBase)+' × '+percent(state.rates.ss),c.ssOther,true);
+   result+='<div class="breakdown-sum net"><span>Neto estimado</span><strong>'+money(c.net)+'</strong></div>';
+   result+='<p class="notice">Base estimada para IRPF: bruto menos media dieta y kilómetros. El cálculo no sustituye la nómina.</p>';
+  }
+  return result;
+ }
+ function paintDetail(period,c){
+  const open=detailOpen[period],panel=$(period==='day'?'dayDetails':'totalDetails');
+  panel.classList.toggle('hide',!open);
+  if(open)panel.innerHTML=breakdownHTML(c,open);
+  document.querySelectorAll('[data-detail="'+period+'"]').forEach(button=>{
+   const selected=button.dataset.kind===open;
+   button.setAttribute('aria-expanded',selected?'true':'false');
+   button.textContent=selected?'Ocultar desglose':'Ver desglose';
+  });
+ }
+ function refresh(){
+  const v=read(),c=compute(v);
+  $('retenArea').classList.toggle('hide',!v.reten);
+  $('todayGross').textContent=money(c.gross);
+  $('todayNet').textContent=money(c.net);
+  const all=aggregateDays();
+  $('allGross').textContent=money(all.gross);
+  $('allNet').textContent=money(all.net);
+  $('count').textContent=Object.keys(state.days).length+' días registrados';
+  paintDetail('day',c);
+  paintDetail('total',all);
+ }
+ document.querySelectorAll('[data-detail]').forEach(button=>button.addEventListener('click',()=>{
+  const period=button.dataset.detail,kind=button.dataset.kind;
+  detailOpen[period]=detailOpen[period]===kind?null:kind;
+  refresh();
+ }));
 function tab(name){for(const x of ['today','history','settings'])$(x).classList.toggle('hide',x!==name);document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));if(name==='history')renderHistory();if(name==='settings')renderRates()}
 function renderHistory(){const dates=Object.keys(state.days).sort().reverse();$('entries').innerHTML=dates.length?dates.map(date=>{const v=state.days[date],c=compute(v);return '<div class="history" data-date="'+date+'"><div class="right"><strong>'+money(c.gross)+'</strong><small>Neto '+money(c.net)+'</small></div><strong>'+new Date(date+'T12:00:00').toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+'</strong><small>'+v.normal+' h normales · '+v.extra+' h extras · '+num(v.km)+' km'+(v.reten?' · Retén':'')+'</small></div>'}).join(''):'<p class="muted">Todavía no has guardado jornadas.</p>'}
 function renderRates(){$('rateFields').innerHTML=fields.map(([title,rows])=>'<div class="settings-title">'+title+'</div><div class="settings-grid">'+rows.map(([key,label])=>'<div class="field"><label for="rate_'+key+'">'+label+'</label><input id="rate_'+key+'" type="number" min="0" step=".01" inputmode="decimal" value="'+num(state.rates[key])+'"></div>').join('')+'</div>').join('')}
