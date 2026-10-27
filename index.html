@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f5f7fb"><meta name="app-build" content="20261027-17"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="HojaRecarga"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg"><link rel="apple-touch-icon" sizes="192x192" href="./icon-192.png"><title>HojaRecarga</title>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f5f7fb"><meta name="app-build" content="20261027-18"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="HojaRecarga"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg"><link rel="apple-touch-icon" sizes="192x192" href="./icon-192.png"><title>HojaRecarga</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1b293b;background:#f5f7fb}*{box-sizing:border-box}body{margin:0}main{max-width:550px;margin:auto;padding:calc(20px + env(safe-area-inset-top)) 16px 45px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.brand{font-size:23px;font-weight:800;letter-spacing:-.7px}.brand span{color:#3269bd}.small{font-size:12px;color:#718094}.card{background:white;border:1px solid #e7ebf2;border-radius:19px;padding:19px;margin-bottom:14px;box-shadow:0 3px 15px #1e355009}h2{font-size:17px;margin:0 0 14px}label{display:block;font-size:13px;font-weight:650;color:#4e5f73;margin-bottom:7px}input{font:inherit;width:100%;border:1px solid #dce4ee;border-radius:12px;background:#f8fafc;padding:13px;color:#192b41;outline-color:#3269bd}input[type=checkbox]{width:19px;height:19px;accent-color:#3269bd}.row{display:flex;gap:12px}.row>*{flex:1;min-width:0}.field{margin-bottom:15px}.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid #edf0f5}.toggle label{margin:0;font-size:15px;color:#1c2a3b}.button{border:0;border-radius:13px;background:#3269bd;color:white;font:inherit;font-weight:700;padding:15px;width:100%;cursor:pointer}.ghost{background:#edf3fc;color:#3269bd}.pill{font-size:12px;background:#edf3fc;color:#3269bd;padding:7px 9px;border-radius:10px}.muted{color:#758294;font-size:13px}.amount{font-size:29px;font-weight:800;letter-spacing:-.8px}.totals{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#f6f8fc;border-radius:14px;padding:14px}.metric .amount{font-size:23px}.green{color:#147b59}.line{display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px solid #edf0f5}.line:last-child{border:0}.hide{display:none!important}.tabs{display:flex;gap:7px;margin-bottom:15px}.tabs button{flex:1;border:0;border-radius:12px;padding:11px 5px;background:#e9eef6;color:#54647b;font-weight:700}.tabs button.active{background:#3269bd;color:#fff}.history{border:1px solid #e6ebf2;border-radius:13px;padding:13px;margin-bottom:9px;cursor:pointer}.history strong{display:block}.history small{color:#6b788a}.history .right{float:right;text-align:right}.danger{color:#b83943;background:#fff1f2}.notice{font-size:12px;color:#738196;line-height:1.5}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.settings-grid .field{margin:0}.settings-grid input{padding:11px}.settings-title{font-weight:750;margin:18px 0 10px}.bottom{margin-top:12px}.datebar{display:flex;align-items:center;gap:9px}.datebar input{flex:1;min-width:0}.mini{border:0;background:#eaf0f9;border-radius:10px;padding:12px;font-weight:800;color:#3269bd}
 
@@ -201,11 +201,18 @@ const read=()=>({normal:num($('normal').value),extra:num($('extra').value),km:nu
   $('workedDays').textContent=qtyText(all.workedDays);
   $('normalHoursTotal').textContent=qtyText(all.normalHours)+' h';
   $('extraHoursTotal').textContent=qtyText(all.extraHours)+' h';
-   $('retenNormalDays').textContent=qtyText(all.retenNormalDays);
-   $('retenHolidayDays').textContent=qtyText(all.retenHolidayDays);
-   $('plusRecargaNormalDays').textContent=qtyText(all.plusRecargaNormalDays);
-   $('plusRecargaHolidayDays').textContent=qtyText(all.plusRecargaHolidayDays);
-   $('extraSummary').classList.toggle('hide',Object.keys(state.days).length===0);
+   const extraCounters={
+    retenNormalDays:all.retenNormalDays,
+    retenHolidayDays:all.retenHolidayDays,
+    plusRecargaNormalDays:all.plusRecargaNormalDays,
+    plusRecargaHolidayDays:all.plusRecargaHolidayDays
+   };
+   for(const [id,count] of Object.entries(extraCounters)){
+    const el=$(id);
+    el.textContent=qtyText(count);
+    el.parentElement.classList.toggle('hide',count===0);
+   }
+   $('extraSummary').classList.toggle('hide',!Object.values(extraCounters).some(count=>count>0));
   paintDetail('day',c);
   paintDetail('total',all);
  }
